@@ -15,7 +15,7 @@
 </head>
 <body>
 
-    <h1>Fantastic Recipes and Where to Find Them!</h1>
+    <h1><a href='/'>Fantastic Recipes and Where to Find Them!</a></h1>
     <h2><i>~ADVANCED~</i></h2>
 
     <form>
@@ -30,9 +30,9 @@
         <fieldset>
             <legend>Ingredients - Enter as a comma seperated list</legend>
             <label for='included_ingredients'>Include:</label>
-            <input id='included_ingredients' name='included_ingredients' type='text'>
+            <input id='included_ingredients' name='included_ingredients' type='text' pattern='([A-z ]*,)*[A-z ]*'>
             <label for='excluded_ingredients'>Exclude:</label>
-            <input id='excluded_ingredients' name='excluded_ingredients' type='text'>
+            <input id='excluded_ingredients' name='excluded_ingredients' type='text' pattern='([A-z ]*,)*[A-z ]*'>
         </fieldset>
         <fieldset>
             <legend>Dietary Restrictions - Select all that apply</legend>
