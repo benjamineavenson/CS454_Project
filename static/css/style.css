@@ -1,0 +1,13 @@
+body {
+    background: blue;
+    /*background-image: url("../images/blue.jpg");*/
+    background-image: url("../images/fantasykitchen.png");
+    color: black;
+    background-position: center;
+    background-size: cover;
+    box-sizing: border-box;
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+
