@@ -9,21 +9,19 @@ import json
 
 class RecipeWhooshSearch(object):
 	"""RecipeWhooshSearch creates an object that can 
-	take in a given data set and create a schema and process searches"""
+	take in a given json data set and create a schema, 
+	index it and process searches"""
 
 	def __init__(self):
 		super(RecipeWhooshSearch, self).__init__()
 
 	def search(self, given_query, limit=10):
-		keys = ['id', 'name', 'cardSet', 'type', 'race', 'rarity', 'cost',
-				'attack', 'health', 'text', 'playerClass', 'img', 'mechanics']
-		ids 	= list()
-		names 	= list()
-		cardSets= list()
-		races 	= list()
-		costs 	= list()
-		attacks = list()
-		healths = list()
+		keys = ['label', 'ingredientLines', 'cautions', 'dietLabels']
+		names 			= list()
+		ingredients		= list()
+		cautions 		= list()
+		dietLabels 		= list()
+		ingredientLines = list()
 
 		with self.indexer.searcher() as search:
 			if given_query[0] == '"' and given_query[-1] == '"':
@@ -35,37 +33,32 @@ class RecipeWhooshSearch(object):
 			results = search.search(query, limit=limit)
 
 			for x in results:
-				ids.append(x['id'])
-				names.append(x['name'])
-				cardSets.append(x['cardSet'])
-				races.append(x['race'])
-				costs.append(x['cost'])
-				attacks.append(x['attack'])
-				healths.append(x['health'])
+				# ids.append(i)
+				names.append(x[keys[0]])
+				ingredients.append([k for k in x[keys[1]]])
+				cautions.append(x[keys[2]])
+				dietLabels.append(x[keys[3]])
 
-		return list(zip(ids, names, cardSets, races, costs, attacks, healths))
+		return list(zip(names, ingredients, cautions, dietLabels))
 
 
 	def index(self):
+		# (Id, Name, ingredients, cautions, dietLabel)
 		schema = Schema(id=ID(stored=True),
 						name=TEXT(stored=True), 
-						cardSet=TEXT(stored=True),
-						race=TEXT(stored=True),
-						cost=TEXT(stored=True),
-						attack=TEXT(stored=True),
-						health=TEXT(stored=True))
+						ingredients=TEXT(stored=True),
+						cautions=TEXT(stored=True),
+						dietLabel=TEXT(stored=True))
 		indexer = create_in('WhooshIndex', schema)
 		writer = indexer.writer()
-		doc_json = json.load(open("cards.json",'r'))
+		doc_json = json.load(open('../recipes/recipe_master_list.json','r'))
 		for doc in doc_json:
-			for card in doc_json[doc]:
-				writer.add_document(id=str(card['dbfId'] if 'dbfId' in card else '0'),
-									name=str(card['name'] if 'name' in card else '0'), 
-									cardSet=str(card['cardSet'] if 'cardSet' in card else '0'),
-									race=str(card['race'] if 'race' in card else '0'),
-									cost=str(card['cost'] if 'cost' in card else '0'),
-									attack=str(card['attack'] if 'attack' in card else '0'),
-									health=str(card['health'] if 'health' in card else '0'))
+			for i, recipe in enumerate(doc_json[doc]):
+				writer.add_document(id=str(i),
+									name=str(recipe['name'] if 'name' in recipe else '0'), 
+									ingredients=str(recipe['ingredients'] if 'ingredients' in recipe else '0'),
+									cautions=str(recipe['cautions'] if 'cautions' in recipe else '0'),
+									dietLabel=str(recipe['dietLabel'] if 'dietLabel' in recipe else '0'))
 		writer.commit()
 
 		self.indexer = indexer
