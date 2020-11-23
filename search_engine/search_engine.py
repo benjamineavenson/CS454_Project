@@ -51,7 +51,7 @@ class RecipeWhooshSearch(object):
 						dietLabel=TEXT(stored=True))
 		indexer = create_in('WhooshIndex', schema)
 		writer = indexer.writer()
-		doc_json = json.load(open('../recipes/recipe_master_list.json','r'))
+		doc_json = json.load(open('recipes/recipe_master_list.json','r'))
 		for doc in doc_json:
 			for i, recipe in enumerate(doc_json[doc]):
 				writer.add_document(id=str(i),

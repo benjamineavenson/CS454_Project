@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template, request
+from search_engine.search_engine import RecipeWhooshSearch
 
 app = Flask(__name__)
 
@@ -7,6 +8,8 @@ app = Flask(__name__)
 def home():
     query = request.args.get('search')
     if query != None:
+        rws = RecipeWhooshSearch()
+        #rws.index()
         #call spencer's methods to get results, for now we will just print the query to the terminal
         print(query)
     return render_template('landing_page.html')
