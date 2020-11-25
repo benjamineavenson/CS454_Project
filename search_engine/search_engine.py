@@ -17,7 +17,6 @@ class RecipeWhooshSearch(object):
 
 	def search(self, given_query, limit=10):
 		keys = ['name', 'ingredients', 'cautions', 'dietLabel']
-		ids = list()
 
 		try:
 			index = open_dir('WhooshIndex')
@@ -33,31 +32,35 @@ class RecipeWhooshSearch(object):
 				parser = MultifieldParser(keys, schema=index.schema, group=OrGroup)
 			query = parser.parse(given_query)
 			results = searcher.search(query, limit=limit)
-			print(results)
+			
+			payload = list()
 			for x in results:
-				ids.append(x['id'])
+				payload.append({'name': 	x['name'], 
+								'image':	x['image']})
 				
 
-		return ids
+		return payload
 
 
 	def index(self):
 		# (Id, Name, ingredients, cautions, dietLabel)
-		schema = Schema(id=ID(stored=True),
+		schema = Schema(id=ID(stored=False),
 						name=TEXT(stored=True), 
-						ingredients=TEXT(stored=True),
-						cautions=TEXT(stored=True),
-						dietLabel=TEXT(stored=True))
+						ingredients=TEXT(stored=False),
+						cautions=TEXT(stored=False),
+						dietLabel=TEXT(stored=False),
+						image=TEXT(stored=True))
 		indexer = create_in('WhooshIndex', schema)
 		writer = indexer.writer()
-		doc_json = json.load(open('recipes/recipe_master_list.json','r'))
-		for entry in doc_json:
-			recipe = entry['data']['recipe']
-			writer.add_document(id=str(entry['id']),
-								name=str(recipe['label'] if 'label' in recipe else '0'), 
-								ingredients=str(recipe['ingredients'] if 'ingredients' in recipe else '0'),
-								cautions=str(recipe['cautions'] if 'cautions' in recipe else '0'),
-								dietLabel=str(recipe['dietLabel'] if 'dietLabel' in recipe else '0'))
-		writer.commit()
-
+		with open('recipes/recipe_master_list.json','r') as db:
+			doc_json = json.load(db)
+			for entry in doc_json:
+				recipe = entry['data']['recipe']
+				writer.add_document(id=str(entry['id']),
+									name=str(recipe['label'] if 'label' in recipe else '0'), 
+									ingredients=str(recipe['ingredients'] if 'ingredients' in recipe else '0'),
+									cautions=str(recipe['cautions'] if 'cautions' in recipe else '0'),
+									dietLabel=str(recipe['dietLabel'] if 'dietLabel' in recipe else '0'),
+									image=str(recipe['image'] if 'image' in recipe else '0'))
+			writer.commit()
 		print("index built")

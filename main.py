@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template, request
+import json
 from search_engine.search_engine import RecipeWhooshSearch
 
 app = Flask(__name__)
@@ -9,7 +10,9 @@ def home():
     query = request.args.get('search')
     if query != None:
         rws = RecipeWhooshSearch()
-        print(rws.search(query))
+        results = rws.search(query)
+       
+        return render_template('results.html', results = results)
     return render_template('landing_page.html')
 
 @app.route('/test')
