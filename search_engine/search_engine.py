@@ -16,30 +16,29 @@ class RecipeWhooshSearch(object):
 		super(RecipeWhooshSearch, self).__init__()
 
 	def search(self, given_query, limit=10):
-		keys = ['label', 'ingredientLines', 'cautions', 'dietLabels']
-		names 			= list()
-		ingredients		= list()
-		cautions 		= list()
-		dietLabels 		= list()
-		ingredientLines = list()
+		keys = ['name', 'ingredients', 'cautions', 'dietLabel']
+		ids = list()
 
-		with self.indexer.searcher() as search:
+		try:
+			index = open_dir('WhooshIndex')
+		except Exception:
+			self.index()
+			index = open_dir('WhooshIndex')
+
+		with index.searcher() as searcher:
 			if given_query[0] == '"' and given_query[-1] == '"':
 				given_query = given_query[1:-1]
-				query = MultifieldParser(keys, schema=self.indexer.schema)
+				parser = MultifieldParser(keys, schema=index.schema)
 			else:
-				query = MultifieldParser(keys, schema=self.indexer.schema, group=OrGroup)
-			query = query.parse(given_query)
-			results = search.search(query, limit=limit)
-
+				parser = MultifieldParser(keys, schema=index.schema, group=OrGroup)
+			query = parser.parse(given_query)
+			results = searcher.search(query, limit=limit)
+			print(results)
 			for x in results:
-				# ids.append(i)
-				names.append(x[keys[0]])
-				ingredients.append([k for k in x[keys[1]]])
-				cautions.append(x[keys[2]])
-				dietLabels.append(x[keys[3]])
+				ids.append(x['id'])
+				
 
-		return list(zip(names, ingredients, cautions, dietLabels))
+		return ids
 
 
 	def index(self):
@@ -52,13 +51,13 @@ class RecipeWhooshSearch(object):
 		indexer = create_in('WhooshIndex', schema)
 		writer = indexer.writer()
 		doc_json = json.load(open('recipes/recipe_master_list.json','r'))
-		for doc in doc_json:
-			for i, recipe in enumerate(doc_json[doc]):
-				writer.add_document(id=str(i),
-									name=str(recipe['name'] if 'name' in recipe else '0'), 
-									ingredients=str(recipe['ingredients'] if 'ingredients' in recipe else '0'),
-									cautions=str(recipe['cautions'] if 'cautions' in recipe else '0'),
-									dietLabel=str(recipe['dietLabel'] if 'dietLabel' in recipe else '0'))
+		for entry in doc_json:
+			recipe = entry['data']['recipe']
+			writer.add_document(id=str(entry['id']),
+								name=str(recipe['label'] if 'label' in recipe else '0'), 
+								ingredients=str(recipe['ingredients'] if 'ingredients' in recipe else '0'),
+								cautions=str(recipe['cautions'] if 'cautions' in recipe else '0'),
+								dietLabel=str(recipe['dietLabel'] if 'dietLabel' in recipe else '0'))
 		writer.commit()
 
-		self.indexer = indexer
+		print("index built")

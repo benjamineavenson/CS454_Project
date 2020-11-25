@@ -9,9 +9,7 @@ def home():
     query = request.args.get('search')
     if query != None:
         rws = RecipeWhooshSearch()
-        #rws.index()
-        #call spencer's methods to get results, for now we will just print the query to the terminal
-        print(query)
+        print(rws.search(query))
     return render_template('landing_page.html')
 
 @app.route('/test')
