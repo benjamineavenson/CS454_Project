@@ -25,5 +25,9 @@ def advanced():
 
     return render_template('advanced.html')
 
+@app.route('/recipe_page', methods=['GET'])
+def recipe_page():
+    return render_template('recipe_page.html')
+
 if __name__ == "__main__":
     app.run(debug=True)
