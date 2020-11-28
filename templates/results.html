@@ -1,28 +1,14 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>FRAWTFT</title>
-        <link rel="stylesheet" href={{ url_for('static', filename='css/style.css') }}>
-    </head>
-    <body>
-        <h1><a href='/'>Fantastic Recipes and Where to Find Them!</a></h1>
+{% extends 'navbar.html' %}
 
-        <form>
-            <label for='search_bar'>Recipe Search:</label>
-            <input id='search_bar' name='search' type='text'>
-            <input id='submit' type='submit'>
-        </form>
-        <a href='/advanced_search'>Advanced Search</a>
-
+    {% block content %}
         <div id='results'>
             {% for entry in results %}
             <div>
-                <a href='/test'>
+                <a href='/recipe_page'>
                     <p>{{entry.name}}</p>
                     <img src={{entry.image}}>
                 </a>
             </div>
             {% endfor %}
         </div>
-    </body>
-</html>
+    {% endblock %}
