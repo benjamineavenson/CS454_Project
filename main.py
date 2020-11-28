@@ -9,7 +9,7 @@ def home():
     if query != None:
         #call spencer's methods to get results, for now we will just print the query to the terminal
         print(query)
-    return render_template('landing_page.html')
+    return render_template('landing_page1.html')
 
 @app.route('/test')
 def test():
@@ -19,7 +19,7 @@ def test():
 def advanced():
     print(request.args)
 
-    return render_template('advanced.html')
+    return render_template('advanced1.html')
 
 if __name__ == "__main__":
     app.run(debug=True)

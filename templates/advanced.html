@@ -4,54 +4,64 @@
     <title>FRAWFT</title>
     <link rel="stylesheet" href={{ url_for('static', filename='css/style.css') }}>
 </head>
-<body>
+<body alink="brown" vlink="brown">
+    <div class="main-container-2">
+        <h1><a href='/'>Fantastic Recipes and Where to Find Them!</a></h1>
+        <h3><i>~ADVANCED SEARCH~</i></h3>
 
-    <h1><a href='/'>Fantastic Recipes and Where to Find Them!</a></h1>
-    <h2><i>~ADVANCED~</i></h2>
-
-    <form>
-        <label for='keywords'>Keyword Search:</label>
-        <input id='keywords' name='keywords' type='text'>
-        <label for='ranking_method'>Ranking Algorithm</label>
-        <select id='ranking_method' name='ranking_method'>
-            <option>BM25</option>
-            <option>Option 2</option>
-            <option>Option 3</option>
-        </select>
-        <fieldset>
-            <legend>Ingredients - Enter as a comma seperated list</legend>
-            <label for='included_ingredients'>Include:</label>
-            <input id='included_ingredients' name='included_ingredients' type='text' pattern='([A-z ]*,)*[A-z ]*'>
-            <label for='excluded_ingredients'>Exclude:</label>
-            <input id='excluded_ingredients' name='excluded_ingredients' type='text' pattern='([A-z ]*,)*[A-z ]*'>
-        </fieldset>
-        <fieldset>
-            <legend>Dietary Restrictions - Select all that apply</legend>
-		<label for='diet_names'>Diets:</label>
-		<input type="checkbox" name="Diabetic" value="Diabetic">Diabetic
-		<input type="checkbox" name="Vegan" value="Vegan">Vegan
-		<input type="checkbox" name="Vegetarian" value="Vegetarian">Vegetarian
-		<input type="checkbox" name="Keto" value="Keto">Keto
-		<input type="checkbox" name="Kosher" value="Kosher">Kosher
-		<input type="checkbox" name="Paleo" value="Paleo">Paleo
-		<input type="checkbox" name="Halal" value="Halal">Halal
-		<input type="checkbox" name="Atkins" value="Atkins">Atkins
-		<input type="checkbox" name="Low carb" value="Low carb">Low carb
-		<input type="checkbox" name="Low fat" value="Low fat">Low fat
-		<input type="checkbox" name="Low sodium" value="Low sodium">Low sodium
-		<br/>
-		<label for='Allergies'>Allergens:</label>
-		<input type="checkbox" name="Eggs" value="Eggs">Eggs
-		<input type="checkbox" name="Shellfish" value="Shellfish">Shellfish
-		<input type="checkbox" name="Fish" value="Fish">Fish
-		<input type="checkbox" name="Peanuts" value="Peanuts">Peanuts
-		<input type="checkbox" name="Tree nuts" value="Tree nuts">Tree nuts
-		<input type="checkbox" name="Gluten" value="Gluten">Gluten
-		<input type="checkbox" name="Wheat" value="Wheat">Wheat
-		<input type="checkbox" name="Lactose" value="Lactose">Lactose
-        </fieldset>
-        <input id='submit' type='submit'>
-    </form>
-
+        <div class="first-line">
+            <form>
+                <label for='keywords'>Keyword Search:</label>
+                <input id='keywords' name='keywords' type='text'>
+                <label for='ranking_method'>Ranking Algorithm</label>
+                <select id='ranking_method' name='ranking_method'>
+                    <option>BM25</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                </select>
+            </form>
+        </div>
+        <div class="main-form">
+            <form>
+                <fieldset>
+                    <legend><b><font size="4">Ingredients - Enter as a comma seperated list</font></b></legend>
+                    <label for='included_ingredients'>Include:</label>
+                    <input id='included_ingredients' name='included_ingredients' type='text' pattern='([A-z ]*,)*[A-z ]*'>
+                    <label for='excluded_ingredients'>Exclude:</label>
+                    <input id='excluded_ingredients' name='excluded_ingredients' type='text' pattern='([A-z ]*,)*[A-z ]*'>
+                </fieldset>
+                <fieldset>
+                    <legend><b><font size="4">Dietary Restrictions - Select all that apply</font></b></legend>
+                <label for='diet_names'>Diets:</label>
+                <input type="checkbox" name="Diabetic" value="Diabetic">Diabetic
+                <input type="checkbox" name="Vegan" value="Vegan">Vegan
+                <input type="checkbox" name="Vegetarian" value="Vegetarian">Vegetarian
+                <input type="checkbox" name="Keto" value="Keto">Keto
+                <input type="checkbox" name="Kosher" value="Kosher">Kosher
+                <input type="checkbox" name="Paleo" value="Paleo">Paleo
+                <input type="checkbox" name="Halal" value="Halal">Halal
+                <input type="checkbox" name="Atkins" value="Atkins">Atkins
+                <input type="checkbox" name="Low carb" value="Low carb">Low carb
+                <input type="checkbox" name="Low fat" value="Low fat">Low fat
+                <input type="checkbox" name="Low sodium" value="Low sodium">Low sodium
+                <br/>
+                <label for='Allergies'>Allergens:</label>
+                <input type="checkbox" name="Eggs" value="Eggs">Eggs
+                <input type="checkbox" name="Shellfish" value="Shellfish">Shellfish
+                <input type="checkbox" name="Fish" value="Fish">Fish
+                <input type="checkbox" name="Peanuts" value="Peanuts">Peanuts
+                <input type="checkbox" name="Tree nuts" value="Tree nuts">Tree nuts
+                <input type="checkbox" name="Gluten" value="Gluten">Gluten
+                <input type="checkbox" name="Wheat" value="Wheat">Wheat
+                <input type="checkbox" name="Lactose" value="Lactose">Lactose
+                </fieldset>
+            </form>
+        </div>
+        <div>
+            <form>
+                <input id='submit' type='submit'>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

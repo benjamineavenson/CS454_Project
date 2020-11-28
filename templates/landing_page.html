@@ -4,14 +4,16 @@
         <title>FRAWTFT</title>
         <link rel="stylesheet" href={{ url_for('static', filename='css/style.css') }}>
     </head>
-    <body>
-        <h1><a href='/'>Fantastic Recipes and Where to Find Them!</a></h1>
+    <body a link="brown" vlink="brown">
+        <div class="main-container-1">
+            <h1><a href='/'>Fantastic Recipes and Where to Find Them!</a></h1>
 
-        <form>
-            <label for='search_bar'>Recipe Search:</label>
-            <input id='search_bar' name='search' type='text'>
-            <input id='submit' type='submit'>
-        </form>
-        <a href='/advanced_search'>Advanced Search</a>
+            <form>
+                <label for='search_bar'>Recipe Search:</label>
+                <input id='search_bar' name='search' type='text'>
+                <input id='submit' type='submit'>
+            </form>
+            <a href='/advanced_search'>Advanced Search</a>
+        </div>
     </body>
 </html>
