@@ -90,4 +90,10 @@ body {
 
 .recipe-name-container {
     border-bottom: 2px solid brown;
+    text-decoration: none;
+    color: brown;
+}
+
+.recipe-name-container > h2 > a:hover {
+    color: orangered;
 }
