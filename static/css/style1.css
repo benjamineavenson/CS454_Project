@@ -1,0 +1,93 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: black;
+}
+
+.nav {
+    background-color: black;
+    color: brown;
+    list-style: none;
+    text-align: right;
+    /*padding: 20px 0 20px 0;*/
+}
+
+.nav > li {
+    display: inline-block;
+    padding: 0 25px 0 25px;
+}
+
+.nav > li > a {
+    text-decoration: none;
+    color: brown;
+}
+
+.nav > li > a:hover {
+    color: orangered;
+}
+
+.logo {
+    color: brown;
+    float: left;
+    /*padding-left: 5px;*/
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.banner {
+    width: 100%;
+    display: block;
+}
+
+.banner > .banner-image {
+    width: 100%;
+    display: block;
+}
+
+.Recipe-box {
+    width: 95%;
+    height: auto;
+    border: 3px solid brown;
+    background-color: black;
+    color: brown;
+    margin: auto;
+    /*justify-content: center;
+    align-content: center;*/
+}
+
+.container {
+    /*border: 3px solid darkblue;*/
+    /*justify-content: center;
+    align-content: center;*/
+    /*align-items: center;*/
+    text-align: center;
+}
+
+.flexbox-container {
+    /*border: 3px solid yellow;*/
+    display: flex;
+    /*justify-content: center;*/
+}
+
+.main-content {
+    /*border: 3px solid springgreen;*/
+    justify-content: space-around;
+}
+
+.sub-content {
+    /*border: 3px dotted red;*/
+    flex-direction: column;
+    justify-content: space-around;
+    min-height: 50px;
+}
+
+.nutrition-container {
+    border-top: 2px solid brown;
+    min-height: 100px;
+    padding-top: 20px;
+}
+
+.recipe-name-container {
+    border-bottom: 2px solid brown;
+}
