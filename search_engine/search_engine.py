@@ -36,7 +36,8 @@ class RecipeWhooshSearch(object):
 			payload = list()
 			for x in results:
 				payload.append({'name': 	x['name'], 
-								'image':	x['image']})
+								'image':	x['image'],
+								'id':		x['id']})
 				
 
 		return payload
@@ -44,7 +45,7 @@ class RecipeWhooshSearch(object):
 
 	def index(self):
 		# (Id, Name, ingredients, cautions, dietLabel)
-		schema = Schema(id=ID(stored=False),
+		schema = Schema(id=ID(stored=True),
 						name=TEXT(stored=True), 
 						ingredients=TEXT(stored=False),
 						cautions=TEXT(stored=False),

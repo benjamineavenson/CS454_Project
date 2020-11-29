@@ -1,14 +1,15 @@
 {% extends 'navbar.html' %}
 
     {% block content %}
-        <div id='results'>
+        <div id='results' class='container'>
             {% for entry in results %}
-            <div>
-                <a href='/recipe_page'>
-                    <p>{{entry.name}}</p>
-                    <img src={{entry.image}}>
-                </a>
-            </div>
+                <div class='card my-5 mx-0'>
+                    <a class='row align-items-center card-body' href='/recipe_page?id={{entry.id}}'>
+                        <h1 class='col-sm-auto mx-auto card-title'>{{entry.name}}</h1>
+                        
+                        <img class='col-sm-auto img-responsive' src="{{entry.image}}" alt="{{entry.name}}" height="200" width="300">
+                    </a>
+                </div>
             {% endfor %}
         </div>
     {% endblock %}
