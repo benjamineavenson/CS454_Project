@@ -4,9 +4,8 @@
         <div id='results' class='container'>
             {% for entry in results %}
                 <div class='card my-5 mx-0'>
-                    <a class='row align-items-center card-body' href='/recipe_page?id={{entry.id}}'>
-                        <h1 class='col-sm-auto mx-auto card-title'>{{entry.name}}</h1>
-                        
+                    <a class='row justify-content-end align-items-center card-body' href='/recipe_page?id={{entry.id}}'>
+                        <h2 class='col-sm-6 mx-auto text-center card-title'>{{entry.name}}</h2>
                         <img class='col-sm-auto img-responsive' src="{{entry.image}}" alt="{{entry.name}}" height="200" width="300">
                     </a>
                 </div>

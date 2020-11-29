@@ -15,7 +15,7 @@ class RecipeWhooshSearch(object):
 	def __init__(self):
 		super(RecipeWhooshSearch, self).__init__()
 
-	def search(self, given_query, limit=10):
+	def search(self, given_query, page=1):
 		keys = ['name', 'ingredients', 'cautions', 'dietLabel']
 
 		try:
@@ -31,14 +31,16 @@ class RecipeWhooshSearch(object):
 			else:
 				parser = MultifieldParser(keys, schema=index.schema, group=OrGroup)
 			query = parser.parse(given_query)
-			results = searcher.search(query, limit=limit)
+			results = searcher.search_page(query, page)
 			
-			payload = list()
+			payload = {}
+			payload_entries = list()
 			for x in results:
-				payload.append({'name': 	x['name'], 
+				payload_entries.append({'name': 	x['name'], 
 								'image':	x['image'],
 								'id':		x['id']})
-				
+			payload['entries']  = payload_entries
+			payload['total'] = len(results)
 
 		return payload
 

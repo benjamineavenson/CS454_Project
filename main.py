@@ -9,10 +9,14 @@ app = Flask(__name__)
 def home():
     query = request.args.get('search')
     if query != None:
+        page = request.args.get('page')
         rws = RecipeWhooshSearch()
-        results = rws.search(query)
+        if page != None:
+            results = rws.search(query, int(page))
+        else:
+            results = rws.search(query)
        
-        return render_template('results.html', results = results)
+        return render_template('results.html', results = results['entries'], total = results['total'])
     return render_template('landing_page.html')
 
 @app.route('/test')
