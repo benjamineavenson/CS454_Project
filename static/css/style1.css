@@ -56,6 +56,27 @@ body {
     align-content: center;*/
 }
 
+.Results {
+    width: 85%;
+    margin: auto;
+    border: 3px solid brown;
+    background-color: black;
+    color: brown;
+    height: auto;
+    min-height: 200px;
+    justify-content: center;
+    text-align: center;
+}
+
+.pages {
+    text-align: center;
+    justify-content: center;
+}
+
+.spacer {
+    min-height: 50px;
+}
+
 .container {
     /*border: 3px solid darkblue;*/
     /*justify-content: center;
@@ -65,9 +86,15 @@ body {
 }
 
 .flexbox-container {
-    /*border: 3px solid yellow;*/
+    /*border: 2px solid brown;*/
     display: flex;
     /*justify-content: center;*/
+}
+
+.items {
+    border: 2px solid brown;
+    justify-content: left;
+    padding-left: 50px;
 }
 
 .main-content {
