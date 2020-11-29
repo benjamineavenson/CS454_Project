@@ -32,3 +32,21 @@ body {
     border: 3px solid brown;
     background-color: black;
 }
+
+.recipe-box {
+    border: 3px solid brown;
+    background-color: black;
+}
+
+.my-row{
+    border: 2px solid purple;
+}
+
+.my-col{
+    border: 2px solid chartreuse;
+}
+
+#myListView.k-widget, #catalog-items.k-widget * {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
