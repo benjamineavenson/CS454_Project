@@ -1,5 +1,7 @@
 from flask import Flask
 from flask import render_template, request
+import json
+import math
 from search_engine.search_engine import RecipeWhooshSearch
 
 app = Flask(__name__)
@@ -8,8 +10,19 @@ app = Flask(__name__)
 def home():
     query = request.args.get('search')
     if query != None:
+        page = request.args.get('page')
         rws = RecipeWhooshSearch()
-        print(rws.search(query))
+        if page != None:
+            results = rws.search(query, int(page))
+            page = int(page)
+        else:
+            results = rws.search(query)
+            page = 1
+       
+        total_pages = math.ceil(results['total']/10)
+       
+
+        return render_template('results.html', query = query, results = results['entries'], total_pages = total_pages, curr_page = page)
     return render_template('landing_page.html')
 
 @app.route('/test')

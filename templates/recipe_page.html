@@ -1,19 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>FRAWTFT</title>
-        <link rel="stylesheet" href={{ url_for('static', filename='css/style1.css') }}>
-    </head>
-    <body a link="brown" vlink="brown">
-        <!--navbar-->
-        <ul class="nav">
-            <div class="logo">Fantastic Recipes and Where to Find Them!</div>
-            <li><a href="/">Home</a></li>
-            <li><button>Search</button><input id='search_bar' name='search' type='text'></li>
-            <li><a href="/advanced_search">Advanced Search</a></li>
-        </ul>
-        <!--navbar-->
+{% extends 'navbar.html' %}
+
+{% block content %}
         <!--banner pic-->
         <div class="banner">
             <img class="banner-image" src="../static/images/fantasykitchen-1.jpg">
@@ -39,5 +26,4 @@
             </div>
         </div>
         <!--main recipe box container-->
-    </body>
-</html>
+    {% endblock %}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>FRAWTFT</title>
+        <link rel="stylesheet" href={{ url_for('static', filename='css/style1.css') }}>
+        
+    </head>
+    <body a link="brown" vlink="brown"></body>
+        <!--navbar-->
+        <ul class="nav">
+            <div class="logo">Fantastic Recipes and Where to Find Them!</div>
+            <li><a href="/">Home</a></li>
+            <li><form action="/" method="GET"><input id='submit' type='submit' value="Search"><input id='search_bar' name='search' type='text'></form></li>
+            <li><a href="/advanced_search">Advanced Search</a></li>
+        </ul>
+        <!--navbar-->
+
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,50 @@
+{% extends 'navbar.html' %}
+
+    {% block content %}
+   
+        <div id='results' class='container'>
+            {% for entry in results %}
+                <div class='card my-5 mx-0'>
+                    <a class='row justify-content-end align-items-center card-body' href='/recipe_page?id={{entry.id}}'>
+                        <h2 class='col-sm-6 mx-auto text-center card-title'>{{entry.name}}</h2>
+                        <img class='col-sm-auto img-responsive' src="{{entry.image}}" alt="{{entry.name}}" height="200" width="300">
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        <nav aria-label="...">
+            <ul class="pagination">
+                {% if curr_page == 1 %}
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a href="/?search={{query}}&page={{curr_page - 1}}" class="page-link">Previous</a>
+                </li>
+                {% endif %}
+
+                {% for page in range(total_pages) %}
+                    {% if page + 1 == curr_page %}
+                    <li class="page-item active">
+                        <span class="page-link">{{page + 1}}<span class="sr-only">(current)</span></span>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="/?search={{query}}&page={{page + 1}}">{{page + 1}}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if curr_page == total_pages %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a href="/?search={{query}}&page={{curr_page + 1}}" class="page-link">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+          </nav>
+    {% endblock %}
