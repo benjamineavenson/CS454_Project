@@ -92,9 +92,21 @@ body {
 }
 
 .items {
+    margin-left: auto;
+    margin-right: auto;
+    width: 75%;
     border: 2px solid brown;
-    justify-content: left;
-    padding-left: 50px;
+    justify-content: flex-end; 
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    /*padding-left: 50px;*/
+}
+
+.items h2 {
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .main-content {
@@ -127,6 +139,8 @@ body {
 
 /*PAGINATION*/
 #pagination {
+    margin-top: 5px;
+    margin-bottom: 5px;
     flex-direction: row;
     justify-content: center;
 }
