@@ -9,59 +9,65 @@
         <h1><a href='/'>Fantastic Recipes and Where to Find Them!</a></h1>
         <h3><i>~ADVANCED SEARCH~</i></h3>
 
-        <div class="first-line">
-            <form>
-                <label for='keywords'>Keyword Search:</label>
-                <input id='keywords' name='keywords' type='text'>
-                <label for='ranking_method'>Ranking Algorithm</label>
-                <select id='ranking_method' name='ranking_method'>
-                    <option>BM25</option>
-                    <option>Option 2</option>
-                    <option>Option 3</option>
-                </select>
-            </form>
-        </div>
-        <div class="main-form">
-            <form>
-                <fieldset>
-                    <legend><b><font size="4">Ingredients - Enter as a comma seperated list</font></b></legend>
+    <div class="main-form">
+        <form action="/advanced_search" method="GET">
+            <div class='flexbox-container'>
+                <div>
+                    <label for='keywords'>Keyword Search:</label>
+                    <input id='keywords' name='keywords' type='text'>
+                </div>
+                <div>
+                    <label for='ranking_method'>Ranking Algorithm</label>
+                    <select id='ranking_method' name='ranking_method'>
+                        <option>BM25</option>
+                        <option>Option 2</option>
+                        <option>Option 3</option>
+                    </select>
+                </div>
+            </div>
+        
+            <fieldset class='flexbox-container'>
+                <legend><b><font size="4">Ingredients - Enter as a comma seperated list</font></b></legend>
+                <div>
                     <label for='included_ingredients'>Include:</label>
                     <input id='included_ingredients' name='included_ingredients' type='text' pattern='([A-z ]*,)*[A-z ]*'>
+                    <input type="checkbox" name="only_included" value=true>Only show recipes with these ingredients
+                    
+                </div>
+                <div>
                     <label for='excluded_ingredients'>Exclude:</label>
                     <input id='excluded_ingredients' name='excluded_ingredients' type='text' pattern='([A-z ]*,)*[A-z ]*'>
-                </fieldset>
-                <fieldset>
-                    <legend><b><font size="4">Dietary Restrictions - Select all that apply</font></b></legend>
-                <label for='diet_names'>Diets:</label>
-                <input type="checkbox" name="Diabetic" value="Diabetic">Diabetic
-                <input type="checkbox" name="Vegan" value="Vegan">Vegan
-                <input type="checkbox" name="Vegetarian" value="Vegetarian">Vegetarian
-                <input type="checkbox" name="Keto" value="Keto">Keto
-                <input type="checkbox" name="Kosher" value="Kosher">Kosher
-                <input type="checkbox" name="Paleo" value="Paleo">Paleo
-                <input type="checkbox" name="Halal" value="Halal">Halal
-                <input type="checkbox" name="Atkins" value="Atkins">Atkins
-                <input type="checkbox" name="Low carb" value="Low carb">Low carb
-                <input type="checkbox" name="Low fat" value="Low fat">Low fat
-                <input type="checkbox" name="Low sodium" value="Low sodium">Low sodium
+                </div>
+            </fieldset>
+            <fieldset>
+            <legend><b><font size="4">Dietary Restrictions - Select all that apply</font></b></legend>
+                <label for='diets'>Diets:</label>
+                <input type="checkbox" name="diets" value="Diabetic">Diabetic
+                <input type="checkbox" name="diets" value="Vegan">Vegan
+                <input type="checkbox" name="diets" value="Vegetarian">Vegetarian
+                <input type="checkbox" name="diets" value="Keto">Keto
+                <input type="checkbox" name="diets" value="Kosher">Kosher
+                <input type="checkbox" name="diets" value="Paleo">Paleo
+                <input type="checkbox" name="diets" value="Halal">Halal
+                <input type="checkbox" name="diets" value="Atkins">Atkins
+                <input type="checkbox" name="diets" value="Low carb">Low carb
+                <input type="checkbox" name="diets" value="Low fat">Low fat
+                <input type="checkbox" name="diets" value="Low sodium">Low sodium
                 <br/>
-                <label for='Allergies'>Allergens:</label>
-                <input type="checkbox" name="Eggs" value="Eggs">Eggs
-                <input type="checkbox" name="Shellfish" value="Shellfish">Shellfish
-                <input type="checkbox" name="Fish" value="Fish">Fish
-                <input type="checkbox" name="Peanuts" value="Peanuts">Peanuts
-                <input type="checkbox" name="Tree nuts" value="Tree nuts">Tree nuts
-                <input type="checkbox" name="Gluten" value="Gluten">Gluten
-                <input type="checkbox" name="Wheat" value="Wheat">Wheat
-                <input type="checkbox" name="Lactose" value="Lactose">Lactose
-                </fieldset>
-            </form>
-        </div>
-        <div>
-            <form>
-                <input id='submit' type='submit'>
-            </form>
-        </div>
+                <label for='cautions'>Allergens:</label>
+                <input type="checkbox" name="cautions" value="Eggs">Eggs
+                <input type="checkbox" name="cautions" value="Shellfish">Shellfish
+                <input type="checkbox" name="cautions" value="Fish">Fish
+                <input type="checkbox" name="cautions" value="Peanuts">Peanuts
+                <input type="checkbox" name="cautions" value="Tree nuts">Tree nuts
+                <input type="checkbox" name="cautions" value="Gluten">Gluten
+                <input type="checkbox" name="cautions" value="Wheat">Wheat
+                <input type="checkbox" name="cautions" value="Lactose">Lactose
+            </fieldset>
+            <div class='flexbox-container'>
+                <input id='submit' type='submit' value="Search">
+            </div>
+        </form>
     </div>
 </body>
 </html>
