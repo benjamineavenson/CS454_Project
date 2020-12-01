@@ -124,3 +124,18 @@ body {
 .recipe-name-container > h2 > a:hover {
     color: orangered;
 }
+
+/*PAGINATION*/
+#pagination {
+    flex-direction: row;
+    justify-content: center;
+}
+
+#pagination span {
+    color: #ffffff;
+}
+
+#pagination .current-page button {
+    background-color: orangered;
+    color: #ffffff;
+}

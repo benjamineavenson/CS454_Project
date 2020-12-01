@@ -14,8 +14,12 @@
             <li><a href="/advanced_search">Advanced Search</a></li>
         </ul>
         <!--navbar-->
+        {% block pagination %}
+        {% endblock %}
 
         {% block content %}
         {% endblock %}
+        
+        {{ self.pagination() }}
     </body>
 </html>
