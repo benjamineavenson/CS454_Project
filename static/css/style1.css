@@ -104,6 +104,10 @@ body {
     /*padding-left: 50px;*/
 }
 
+#no-results {
+    color: orangered;
+}
+
 .items h2 {
     margin-right: auto;
     margin-left: auto;
