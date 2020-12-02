@@ -37,6 +37,8 @@ def advanced():
 
 @app.route('/recipe_page', methods=['GET'])
 def recipe_page():
+    rws = RecipeWhooshSearch()
+    rws.lookup(request.args.get('id'))
     return render_template('recipe_page.html')
 
 @app.route('/results_page', methods=['GET'])

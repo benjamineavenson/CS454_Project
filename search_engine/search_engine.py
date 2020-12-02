@@ -45,6 +45,19 @@ class RecipeWhooshSearch(object):
 		return payload
 
 
+	def lookup(self, id):
+		try:
+			index = open_dir('WhooshIndex')
+		except Exception:
+			self.index()
+			index = open_dir('WhooshIndex')
+		
+		with index.searcher() as searcher:
+			
+			result = list(searcher.documents(id=id))
+			print(result)
+			
+
 	def index(self):
 		# (Id, Name, ingredients, cautions, dietLabel)
 		schema = Schema(id=ID(stored=True),
