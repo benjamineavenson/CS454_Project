@@ -21,7 +21,6 @@ def home():
        
         total_pages = math.ceil(results['total']/10)
        
-
         return render_template('results.html', query = query, results = results['entries'], total_pages = total_pages, curr_page = page)
     return render_template('landing_page.html')
 

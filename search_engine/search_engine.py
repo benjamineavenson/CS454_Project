@@ -7,6 +7,14 @@ from whoosh.qparser import MultifieldParser, OrGroup
 from whoosh import qparser
 import json
 
+# Wish List:
+# 	- a function for advanced search
+# 	- and also a function that takes an ID and returns that 
+# 		recipe
+# 	- schema is going to have to be updated for the latter, 
+# 		its not currently storing everything that needs to be 
+# 		returned
+
 class RecipeWhooshSearch(object):
 	"""RecipeWhooshSearch creates an object that can 
 	take in a given json data set and create a schema, 
@@ -15,8 +23,11 @@ class RecipeWhooshSearch(object):
 	def __init__(self):
 		super(RecipeWhooshSearch, self).__init__()
 
-	def search(self, given_query, page=1):
-		keys = ['name', 'ingredients', 'cautions', 'dietLabel']
+	def search(self, given_query=None, 
+				in_query=None, ex_query=None, 
+				diets=None, allegies=None, page=1):
+		# These are only for parsing not for filling the results
+		keys = ['name', 'ingredients', 'cautions', 'dietLabels', 'healthLabels']
 
 		try:
 			index = open_dir('WhooshIndex')
@@ -46,13 +57,15 @@ class RecipeWhooshSearch(object):
 
 
 	def index(self):
-		# (Id, Name, ingredients, cautions, dietLabel)
+		# (Id, Name, ingredients, cautions, dietLabel, healthLabel, image, url)
 		schema = Schema(id=ID(stored=True),
 						name=TEXT(stored=True), 
 						ingredients=TEXT(stored=False),
 						cautions=TEXT(stored=False),
 						dietLabel=TEXT(stored=False),
-						image=TEXT(stored=True))
+						healthLabel=TEXT(stored=False),
+						image=TEXT(stored=True),
+						url=TEXT(stored=True, unique=True))
 		indexer = create_in('WhooshIndex', schema)
 		writer = indexer.writer()
 		with open('recipes/recipe_master_list.json','r') as db:
@@ -63,7 +76,9 @@ class RecipeWhooshSearch(object):
 									name=str(recipe['label'] if 'label' in recipe else '0'), 
 									ingredients=str(recipe['ingredients'] if 'ingredients' in recipe else '0'),
 									cautions=str(recipe['cautions'] if 'cautions' in recipe else '0'),
-									dietLabel=str(recipe['dietLabel'] if 'dietLabel' in recipe else '0'),
-									image=str(recipe['image'] if 'image' in recipe else '0'))
+									dietLabels=str(recipe['dietLabels'] if 'dietLabels' in recipe else '0'),
+									healthLabels=str(recipe['healthLabels'] if 'healthLabels' in recipe else '0'),
+									image=str(recipe['image'] if 'image' in recipe else '0'),
+									url=str(recipe['url'] if 'url' in recipe else '0'))
 			writer.commit()
 		print("index built")
