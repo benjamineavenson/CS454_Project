@@ -36,12 +36,18 @@ class RecipeWhooshSearch(object):
 			index = open_dir('WhooshIndex')
 
 		with index.searcher() as searcher:
+			# if given_query != None:
 			if given_query[0] == '"' and given_query[-1] == '"':
 				given_query = given_query[1:-1]
 				parser = MultifieldParser(keys, schema=index.schema)
 			else:
 				parser = MultifieldParser(keys, schema=index.schema, group=OrGroup)
 			query = parser.parse(given_query)
+			if in_query != None:
+				allow_q = query.Term('ingredients', in_query)
+			if ex_query != None:
+				restrict_q = query.Term('ingredients', ex_query)
+			if 
 			results = searcher.search_page(query, page)
 			
 			payload = {}
