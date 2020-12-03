@@ -37,7 +37,27 @@ def advanced():
 
 @app.route('/recipe_page', methods=['GET'])
 def recipe_page():
-    return render_template('recipe_page.html')
+    rws = RecipeWhooshSearch()
+    
+    if request.args.get('id') != None:
+        recipe = rws.lookup(request.args.get('id'))[0]
+        ingredients = recipe['ingredients'].strip('[').strip(']').split("'")
+        for i in ingredients:
+            if len(i) <= 2:
+                ingredients.remove(i)
+        cautions = recipe['cautions'].strip('[').strip(']').replace("'", '').split(',')
+        dietInfo = recipe['dietInfo'].strip('[').strip(']').replace("'", '').split(',')
+
+
+    else:
+        recipe = None
+        ingredients = None
+        cautions = None
+        dietInfo = None
+    
+    print(cautions)
+    print(dietInfo)
+    return render_template('recipe_page.html', recipe = recipe, ingredients = ingredients)
 
 @app.route('/results_page', methods=['GET'])
 def results_page():
