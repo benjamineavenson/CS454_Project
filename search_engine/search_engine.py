@@ -7,6 +7,14 @@ from whoosh.qparser import MultifieldParser, OrGroup
 from whoosh import qparser
 import json
 
+# Wish List:
+# 	- a function for advanced search
+# 	- and also a function that takes an ID and returns that 
+# 		recipe
+# 	- schema is going to have to be updated for the latter, 
+# 		its not currently storing everything that needs to be 
+# 		returned
+
 class RecipeWhooshSearch(object):
 	"""RecipeWhooshSearch creates an object that can 
 	take in a given json data set and create a schema, 
@@ -15,8 +23,11 @@ class RecipeWhooshSearch(object):
 	def __init__(self):
 		super(RecipeWhooshSearch, self).__init__()
 
-	def search(self, given_query, page=1):
-		keys = ['name', 'ingredients', 'cautions', 'dietLabel']
+	def search(self, given_query=None, 
+				in_query=None, ex_query=None, 
+				diets=None, allegies=None, page=1):
+		# These are only for parsing not for filling the results
+		keys = ['name', 'ingredients', 'cautions', 'dietLabels', 'healthLabels']
 
 		try:
 			index = open_dir('WhooshIndex')
@@ -25,12 +36,18 @@ class RecipeWhooshSearch(object):
 			index = open_dir('WhooshIndex')
 
 		with index.searcher() as searcher:
+			# if given_query != None:
 			if given_query[0] == '"' and given_query[-1] == '"':
 				given_query = given_query[1:-1]
 				parser = MultifieldParser(keys, schema=index.schema)
 			else:
 				parser = MultifieldParser(keys, schema=index.schema, group=OrGroup)
 			query = parser.parse(given_query)
+			if in_query != None:
+				allow_q = query.Term('ingredients', in_query)
+			if ex_query != None:
+				restrict_q = query.Term('ingredients', ex_query)
+			if 
 			results = searcher.search_page(query, page)
 			
 			payload = {}
@@ -60,7 +77,7 @@ class RecipeWhooshSearch(object):
 			
 
 	def index(self):
-		# (Id, Name, ingredients, cautions, dietLabel)
+		# (Id, Name, ingredients, cautions, dietLabel, healthLabel, image, url)
 		schema = Schema(id=ID(stored=True),
 						url=TEXT(stored=True),
 						name=TEXT(stored=True), 
