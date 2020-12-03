@@ -55,16 +55,18 @@ class RecipeWhooshSearch(object):
 		with index.searcher() as searcher:
 			
 			result = list(searcher.documents(id=id))
-			print(result)
+		
+		return result
 			
 
 	def index(self):
 		# (Id, Name, ingredients, cautions, dietLabel)
 		schema = Schema(id=ID(stored=True),
+						url=TEXT(stored=True),
 						name=TEXT(stored=True), 
-						ingredients=TEXT(stored=False),
-						cautions=TEXT(stored=False),
-						dietLabel=TEXT(stored=False),
+						ingredients=TEXT(stored=True),
+						cautions=KEYWORD(stored=True),
+						dietInfo=KEYWORD(stored=True),
 						image=TEXT(stored=True))
 		indexer = create_in('WhooshIndex', schema)
 		writer = indexer.writer()
@@ -72,11 +74,15 @@ class RecipeWhooshSearch(object):
 			doc_json = json.load(db)
 			for entry in doc_json:
 				recipe = entry['data']['recipe']
+				dietLabels = recipe['dietLabels'] if 'dietLabels' in recipe else []
+				healthLabels = recipe['healthLabels'] if 'healthLabels' in recipe else []
+				dietInfo = dietLabels + healthLabels
 				writer.add_document(id=str(entry['id']),
+									url=str(recipe['url'] if 'url' in recipe else '0'),
 									name=str(recipe['label'] if 'label' in recipe else '0'), 
-									ingredients=str(recipe['ingredients'] if 'ingredients' in recipe else '0'),
+									ingredients=str(recipe['ingredientLines'] if 'ingredientLines' in recipe else '0'),
 									cautions=str(recipe['cautions'] if 'cautions' in recipe else '0'),
-									dietLabel=str(recipe['dietLabel'] if 'dietLabel' in recipe else '0'),
+									dietInfo=str(dietInfo),
 									image=str(recipe['image'] if 'image' in recipe else '0'))
 			writer.commit()
 		print("index built")
