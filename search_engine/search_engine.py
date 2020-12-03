@@ -25,7 +25,7 @@ class RecipeWhooshSearch(object):
 
 	def search(self, given_query=None, 
 				in_query=None, ex_query=None, 
-				diets=None, allegies=None, page=1):
+				diets=None, allergies=None, page=1):
 		# These are only for parsing not for filling the results
 		keys = ['name', 'ingredients', 'cautions', 'dietLabels', 'healthLabels']
 
@@ -36,19 +36,40 @@ class RecipeWhooshSearch(object):
 			index = open_dir('WhooshIndex')
 
 		with index.searcher() as searcher:
-			# if given_query != None:
+			# given query parsing
 			if given_query[0] == '"' and given_query[-1] == '"':
 				given_query = given_query[1:-1]
 				parser = MultifieldParser(keys, schema=index.schema)
 			else:
 				parser = MultifieldParser(keys, schema=index.schema, group=OrGroup)
 			query = parser.parse(given_query)
-			if in_query != None:
-				allow_q = query.Term('ingredients', in_query)
-			if ex_query != None:
-				restrict_q = query.Term('ingredients', ex_query)
-			if 
 			results = searcher.search_page(query, page)
+			# include query parsing
+			if in_query != None:
+				in_parser = MultifieldParser('ingredients', schema=index.schema)
+				in_q = parser.parse(in_query)
+				in_r = searcher.search_page(query=in_q, page=page)
+			# else:
+				#in = *
+				#results = results.filter(*)
+			# exclude query parsing
+			if ex_query != None:
+				ex_parser = MultifieldParser('ingredients', schema=index.schema)
+				ex_q = parser.parse(ex_query)
+				ex_r = searcher.search_page(query=ex_q, page=page)
+			# allergies query parsing
+			if allergies != None:
+				allergy_parser = MultifieldParser('cautions', schema=index.schema)
+				allergy_q = parser.parse(allergies)
+				allergy_r = searcher.search_page(query=allergy_q, page=page)
+				results = results.filter(allergy_r)
+			# diets query parsing
+			if diets != None:
+				diet_parser = MultifieldParser('dietInfo', schema=index.schema)
+				diets_q = parser.parse(diets)
+				diets_r = searcher.search_page(query=diets_q, page=page)
+			# filtering results to get intersection
+			# print(type(results))
 			
 			payload = {}
 			payload_entries = list()

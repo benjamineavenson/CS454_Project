@@ -13,7 +13,7 @@ def home():
         page = request.args.get('page')
         rws = RecipeWhooshSearch()
         if page != None:
-            results = rws.search(query, int(page))
+            results = rws.search(given_query=query, page=int(page))
             page = int(page)
         else:
             results = rws.search(query)
@@ -21,7 +21,11 @@ def home():
        
         total_pages = math.ceil(results['total']/10)
        
-        return render_template('results.html', query = query, results = results['entries'], total_pages = total_pages, curr_page = page)
+        return render_template('results.html', 
+                                query=query, 
+                                results=results['entries'], 
+                                total_pages=total_pages, 
+                                curr_page=page)
     return render_template('landing_page.html')
 
 @app.route('/test')
@@ -31,7 +35,18 @@ def test():
 @app.route('/advanced_search', methods=['GET'])
 def advanced():
     print(request.args)
-
+    query = request.args.get('Keyword Search')
+    if query != None:
+        page = request.args.get('page')
+        rws = RecipeWhooshSearch()
+        if page != None:
+            results = rws.search(given_query=query, page=int(page))
+            page = int(page)
+        else:
+            results = rws.search(query)
+            page = 1
+       
+        total_pages = math.ceil(results['total']/10)
     return render_template('advanced.html')
 
 @app.route('/recipe_page', methods=['GET'])
