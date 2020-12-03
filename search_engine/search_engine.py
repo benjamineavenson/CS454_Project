@@ -67,22 +67,34 @@ class RecipeWhooshSearch(object):
 						ingredients=TEXT(stored=True),
 						cautions=KEYWORD(stored=True),
 						dietInfo=KEYWORD(stored=True),
+						nutrition=TEXT(stored=True),
 						image=TEXT(stored=True))
 		indexer = create_in('WhooshIndex', schema)
 		writer = indexer.writer()
 		with open('recipes/recipe_master_list.json','r') as db:
 			doc_json = json.load(db)
 			for entry in doc_json:
+
 				recipe = entry['data']['recipe']
+
 				dietLabels = recipe['dietLabels'] if 'dietLabels' in recipe else []
 				healthLabels = recipe['healthLabels'] if 'healthLabels' in recipe else []
 				dietInfo = dietLabels + healthLabels
+
+				nutrients = []
+				for nutrient in recipe['totalNutrients']:
+					quantity = str(recipe['totalNutrients'][nutrient]['quantity'])
+					quantity = quantity.partition('.')[0] + quantity.partition('.')[1] + quantity.partition('.')[2][:2]
+					n = recipe['totalNutrients'][nutrient]['label'] + ": " + quantity + recipe['totalNutrients'][nutrient]['unit']
+					nutrients.append(n)
+
 				writer.add_document(id=str(entry['id']),
 									url=str(recipe['url'] if 'url' in recipe else '0'),
 									name=str(recipe['label'] if 'label' in recipe else '0'), 
 									ingredients=str(recipe['ingredientLines'] if 'ingredientLines' in recipe else '0'),
 									cautions=str(recipe['cautions'] if 'cautions' in recipe else '0'),
 									dietInfo=str(dietInfo),
+									nutrition=str(nutrients),
 									image=str(recipe['image'] if 'image' in recipe else '0'))
 			writer.commit()
 		print("index built")

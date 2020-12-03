@@ -20,23 +20,36 @@
             <div class="flexbox-container main-content">
                 <div class="flexbox-container sub-content">
                     <div class="flexbox-container dietary-restrictions"><h3>Dietary Info</h3>
+                        <ul>
+                            {% for d in dietInfo %}
+                            <li>{{d}}</li>
+                            {% endfor %}
+                        </ul>
                     </div>
                     <div class="flexbox-container cautions"><h3>Cautions</h3>
+                        <ul>
+                            {% for c in cautions %}
+                            <li>{{c}}</li>
+                            {% endfor %}
+                        </ul>
                     </div>
                     <div class="flexbox-container ingredients"><h3>Ingredients</h3>
                         <ul>
-                            {% for ingredient in ingredients %}
-                            <li>{{ingredient}}</li>
+                            {% for i in ingredients %}
+                            <li>{{i}}</li>
                             {% endfor %}
                         </ul>
                     </div>
                 </div>
                 <div class="flexbox-container image-container">
-                    <img class="recipe-image" src="{{recipe.image}}">
+                    <img class="recipe-image" src="{{recipe.image}}" height=200>
                 </div>
             </div>
             <div class="container nutrition-container">
                 <h3>Nutrition Information</h3>
+                    {% for n in nutrition %}
+                    <p>{{n}}</p>
+                    {% endfor %}
             </div>
         </div>
         <!--main recipe box container-->

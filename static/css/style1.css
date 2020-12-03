@@ -116,6 +116,7 @@ body {
 .main-content {
     /*border: 3px solid springgreen;*/
     justify-content: space-around;
+    align-items: center;
 }
 
 .sub-content {

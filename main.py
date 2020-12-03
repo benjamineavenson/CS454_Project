@@ -42,22 +42,36 @@ def recipe_page():
     if request.args.get('id') != None:
         recipe = rws.lookup(request.args.get('id'))[0]
         ingredients = recipe['ingredients'].strip('[').strip(']').split("'")
+
+        temp = []
         for i in ingredients:
-            if len(i) <= 2:
-                ingredients.remove(i)
+            i = i.replace('\u00c2', '')
+            if len(i) > 2:
+                temp.append(i)
+        ingredients = temp
+
+
         cautions = recipe['cautions'].strip('[').strip(']').replace("'", '').split(',')
+
+        temp = []
+        for c in cautions:
+            c = c.strip()
+            temp.append(c)
+        cautions = temp
+
         dietInfo = recipe['dietInfo'].strip('[').strip(']').replace("'", '').split(',')
 
+        temp = []
+        for d in dietInfo:
+            d = d.strip()
+            temp.append(d)
+        dietInfo = temp
 
+        nutrition = recipe['nutrition'].strip('[').strip(']').replace("'", '').split(',')
     else:
-        recipe = None
-        ingredients = None
-        cautions = None
-        dietInfo = None
+        return render_template('landing_page.html')
     
-    print(cautions)
-    print(dietInfo)
-    return render_template('recipe_page.html', recipe = recipe, ingredients = ingredients)
+    return render_template('recipe_page.html', recipe = recipe, ingredients = ingredients, cautions = cautions, dietInfo = dietInfo, nutrition = nutrition)
 
 @app.route('/results_page', methods=['GET'])
 def results_page():
