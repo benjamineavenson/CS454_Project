@@ -7,18 +7,14 @@ from whoosh.qparser import MultifieldParser, OrGroup
 from whoosh import qparser
 import json
 
-# Wish List:
-# 	- a function for advanced search
-# 	- and also a function that takes an ID and returns that 
-# 		recipe
-# 	- schema is going to have to be updated for the latter, 
-# 		its not currently storing everything that needs to be 
-# 		returned
+
 def list_to_keywords(ls):
 	keywords = ""
 	for k in ls:
 		keywords += k+','
 	return keywords[:-1]
+
+
 
 class RecipeWhooshSearch(object):
 	"""RecipeWhooshSearch creates an object that can 
@@ -27,7 +23,6 @@ class RecipeWhooshSearch(object):
 
 	def __init__(self):
 		super(RecipeWhooshSearch, self).__init__()
-
 
 
 	def search(self, given_query='', 
@@ -46,35 +41,38 @@ class RecipeWhooshSearch(object):
 			# Universal all docs in case of None
 			# because in the intersection the smaller 
 			# result will be returned
-
+			parser = QueryParser('url', schema = index.schema)
+			q = parser.parse('http OR https')
+			all_docs = searcher.search(q)
+			# Creates an empty result for a filter and mask
 			p = QueryParser('id', schema=index.schema)
 			q = p.parse('')
 			myMask = searcher.search(q)
 			myFilter = searcher.search(q)
-			
+			# Check if the filter is empty so we don't intersect nothing
+			if(len(myFilter) == 0):
+				myFilter = all_docs
 			
 			# include query parsing
-			#in_parser = MultifieldParser('ingredients', schema=index.schema)
-			# if in_query != None:	
-			# 	in_q = in_parser.parse(in_query)
-			# 	in_r = searcher.search_page(query=in_q, page=page)
-			# else:
-			# 	in_r = all_docs
+			if in_query != '':	
+				in_parser = QueryParser('ingredients', schema=index.schema)
+				in_q = in_parser.parse(in_query)
+				in_r = searcher.search(in_q)
+				myFilter.extend(in_r)
 			# exclude query parsing
-			# if ex_query != None:
-			# 	ex_parser = MultifieldParser('ingredients', schema=index.schema)
-			# 	ex_q = ex_parser.parse(ex_query)
-			# 	ex_r = searcher.search_page(query=ex_q, page=page)
-			# else:
-			# 	ex_r = all_docs
+			if ex_query != '':
+				ex_parser = QueryParser('ingredients', schema=index.schema)
+				ex_q = ex_parser.parse(ex_query)
+				ex_r = searcher.search(ex_q)
+				myMask.extend(ex_r)
+			else:
+				ex_r = all_docs
 			# allergies query parsing
 			if allergies != []:
 				allergy_parser = QueryParser('cautions', schema=index.schema)
 				allergies = list_to_keywords(allergies)
-				print(allergies)
 				allergy_q = allergy_parser.parse(allergies)
 				allergy_r = searcher.search(allergy_q)
-				print(len(allergy_r))
 				myMask.extend(allergy_r)
 			# diets query parsing
 			if diets != []:
@@ -86,12 +84,6 @@ class RecipeWhooshSearch(object):
 			# filtering results to get intersection
 			# print(type(results))
 			
-			parser = QueryParser('url', schema = index.schema)
-			q = parser.parse('http OR https')
-			all_docs = searcher.search(q)
-			
-			if(len(myFilter) == 0):
-				myFilter = all_docs
 
 			if given_query != '' and given_query != None:
 				if given_query[0] == '"' and given_query[-1] == '"':
@@ -100,19 +92,15 @@ class RecipeWhooshSearch(object):
 				else:
 					parser = MultifieldParser(keys, schema=index.schema, group=OrGroup)
 				query = parser.parse(given_query)
-
-
 				results = searcher.search_page(query, page, filter=myFilter, mask=myMask)
-				
 			else:
 				parser = QueryParser('url', schema = index.schema)
 				q = parser.parse('http OR https')
 				all_docs = searcher.search_page(q, page, filter=myFilter, mask=myMask)
 				print(len(all_docs))
-				#q = parser.parse('https')
-				#all_docs.extend(searcher.search(q, limit=None))
 				results = all_docs
 
+			# Format results for returning
 			payload = {}
 			payload_entries = list()
 			for x in results:
@@ -123,7 +111,6 @@ class RecipeWhooshSearch(object):
 			payload['total'] = len(results)
 
 		return payload
-
 
 
 	def lookup(self, id):
@@ -147,8 +134,8 @@ class RecipeWhooshSearch(object):
 						url=TEXT(stored=True),
 						name=TEXT(stored=True), 
 						ingredients=TEXT(stored=True),
-						cautions=TEXT(stored=True),
-						dietInfo=TEXT(stored=True),
+						cautions=KEYWORD(stored=True),
+						dietInfo=KEYWORD(stored=True),
 						nutrition=TEXT(stored=True),
 						image=TEXT(stored=True))
 		indexer = create_in('WhooshIndex', schema)
