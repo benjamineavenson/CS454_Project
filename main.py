@@ -34,7 +34,7 @@ def test():
 
 @app.route('/advanced_search', methods=['GET'])
 def advanced():
-    print(request.args)
+    #print(request.args)
     rws = RecipeWhooshSearch()
     # Get all the input from the user
     query = request.args.get('keywords')
@@ -45,11 +45,11 @@ def advanced():
     page = request.args.get('page')
     page = int(page) if(page != None) else 1
     # test allergens
-    if((query == None) and 
-        (include == None) and 
-        (exclude == None) and
-        (diets == None) and
-        (cautions == None)):
+    if((query == None or query == '') and 
+        (include == None or include == '') and 
+        (exclude == None or exclude == '') and
+        (diets == []) and
+        (cautions == [])):
         return render_template('advanced.html')
     
     results = rws.search(given_query=query, 
