@@ -35,19 +35,35 @@ def test():
 @app.route('/advanced_search', methods=['GET'])
 def advanced():
     print(request.args)
-    query = request.args.get('Keyword Search')
-    if query != None:
-        page = request.args.get('page')
-        rws = RecipeWhooshSearch()
-        if page != None:
-            results = rws.search(given_query=query, page=int(page))
-            page = int(page)
-        else:
-            results = rws.search(query)
-            page = 1
-       
-        total_pages = math.ceil(results['total']/10)
-    return render_template('advanced.html')
+    rws = RecipeWhooshSearch()
+    # Get all the input from the user
+    query = request.args.get('keywords')
+    include = request.args.get('included_ingredients')
+    exclude = request.args.get('excluded_ingredients')
+    diets   = request.args.getlist('diets')
+    cautions= request.args.getlist('cautions')
+    page = request.args.get('page')
+    page = int(page) if(page != None) else 1
+    # test allergens
+    if((query == None) and 
+        (include == None) and 
+        (exclude == None) and
+        (diets == None) and
+        (cautions == None)):
+        return render_template('advanced.html')
+    
+    results = rws.search(given_query=query, 
+                        in_query=include, 
+                        ex_query=exclude, 
+                        diets=diets, 
+                        allergies=cautions, 
+                        page=page)
+    total_pages = math.ceil(results['total']/10)
+    return render_template('results.html', 
+                            query=query, 
+                            results=results['entries'], 
+                            total_pages=total_pages, 
+                            curr_page=page)
 
 @app.route('/recipe_page', methods=['GET'])
 def recipe_page():

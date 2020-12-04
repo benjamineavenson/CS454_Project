@@ -14,6 +14,11 @@ import json
 # 	- schema is going to have to be updated for the latter, 
 # 		its not currently storing everything that needs to be 
 # 		returned
+def list_to_keywords(ls):
+	keywords = ""
+	for k in ls:
+		keywords += k+','
+	return keywords[:-1]
 
 class RecipeWhooshSearch(object):
 	"""RecipeWhooshSearch creates an object that can 
@@ -22,6 +27,8 @@ class RecipeWhooshSearch(object):
 
 	def __init__(self):
 		super(RecipeWhooshSearch, self).__init__()
+
+
 
 	def search(self, given_query=None, 
 				in_query=None, ex_query=None, 
@@ -36,38 +43,54 @@ class RecipeWhooshSearch(object):
 			index = open_dir('WhooshIndex')
 
 		with index.searcher() as searcher:
+			# Universal all docs in case of None
+			# because in the intersection the smaller 
+			# result will be returned
+			all_docs = searcher.documents()
 			# given query parsing
-			if given_query[0] == '"' and given_query[-1] == '"':
-				given_query = given_query[1:-1]
-				parser = MultifieldParser(keys, schema=index.schema)
+			if given_query != None:
+				if given_query[0] == '"' and given_query[-1] == '"':
+					given_query = given_query[1:-1]
+					parser = MultifieldParser(keys, schema=index.schema)
+				else:
+					parser = MultifieldParser(keys, schema=index.schema, group=OrGroup)
+				query = parser.parse(given_query)
+				results = searcher.search_page(query, page)
 			else:
-				parser = MultifieldParser(keys, schema=index.schema, group=OrGroup)
-			query = parser.parse(given_query)
-			results = searcher.search_page(query, page)
+				results = all_docs
 			# include query parsing
-			if in_query != None:
-				in_parser = MultifieldParser('ingredients', schema=index.schema)
-				in_q = parser.parse(in_query)
-				in_r = searcher.search_page(query=in_q, page=page)
+			in_parser = MultifieldParser('ingredients', schema=index.schema)
+			# if in_query != None:	
+			# 	in_q = in_parser.parse(in_query)
+			# 	in_r = searcher.search_page(query=in_q, page=page)
 			# else:
-				#in = *
-				#results = results.filter(*)
+			# 	in_r = all_docs
 			# exclude query parsing
-			if ex_query != None:
-				ex_parser = MultifieldParser('ingredients', schema=index.schema)
-				ex_q = parser.parse(ex_query)
-				ex_r = searcher.search_page(query=ex_q, page=page)
+			# if ex_query != None:
+			# 	ex_parser = MultifieldParser('ingredients', schema=index.schema)
+			# 	ex_q = ex_parser.parse(ex_query)
+			# 	ex_r = searcher.search_page(query=ex_q, page=page)
+			# else:
+			# 	ex_r = all_docs
 			# allergies query parsing
 			if allergies != None:
+				allergies = list_to_keywords(allergies)
 				allergy_parser = MultifieldParser('cautions', schema=index.schema)
-				allergy_q = parser.parse(allergies)
-				allergy_r = searcher.search_page(query=allergy_q, page=page)
-				results = results.filter(allergy_r)
+				allergy_q = allergy_parser.parse(allergies)
+				allergy_r = searcher.search_page(query=allergy_q, pagenum=page)
+			else:
+				# allergy_r = all_docs
+				allergy_q = allergy_parser.parse(all_docs)
+				allergy_r = searcher.search_page(query=allergy_q, pagenum=page)
+			results = results.filter(allergy_r)
 			# diets query parsing
-			if diets != None:
-				diet_parser = MultifieldParser('dietInfo', schema=index.schema)
-				diets_q = parser.parse(diets)
-				diets_r = searcher.search_page(query=diets_q, page=page)
+			# if diets != None:
+			# 	diets = list_to_keywords(diets)
+			# 	diet_parser = MultifieldParser('dietInfo', schema=index.schema)
+			# 	diets_q = diet_parser.parse(diets)
+			# 	diets_r = searcher.search_page(query=diets_q, page=page)
+			# else:
+			# 	diets_r = all_docs
 			# filtering results to get intersection
 			# print(type(results))
 			
@@ -81,6 +104,7 @@ class RecipeWhooshSearch(object):
 			payload['total'] = len(results)
 
 		return payload
+
 
 
 	def lookup(self, id):
