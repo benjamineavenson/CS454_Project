@@ -47,7 +47,7 @@ class RecipeWhooshSearch(object):
 				allow_q = query.Term('ingredients', in_query)
 			if ex_query != None:
 				restrict_q = query.Term('ingredients', ex_query)
-			if 
+			
 			results = searcher.search_page(query, page)
 			
 			payload = {}
