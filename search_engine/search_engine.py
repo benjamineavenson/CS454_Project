@@ -83,8 +83,10 @@ class RecipeWhooshSearch(object):
 				allergies = list_to_keywords(allergies)
 				allergy_q = allergy_parser.parse(allergies)
 				allergy_r = searcher.search(allergy_q, limit=None)
+				print(allergy_r)
 				myMask.extend(allergy_r)
 
+			print(myMask)
 			# diets query parsing
 			if diets != []:
 				p = QueryParser('id', schema=index.schema)
@@ -107,7 +109,7 @@ class RecipeWhooshSearch(object):
 			# print(type(results))
 
 			# Check if the filter is empty so we don't intersect nothing
-			if(diets == [] and in_query == []):
+			if(diets == [] and (in_query == [''] or in_query == [])):
 				myFilter = all_docs
 			elif myFilter.scored_length() == 0:	#if we filtered and got nothing, we should return nothing
 				payload = {}
