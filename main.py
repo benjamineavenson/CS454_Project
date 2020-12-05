@@ -6,6 +6,32 @@ from search_engine.search_engine import RecipeWhooshSearch
 
 app = Flask(__name__)
 
+def toList(ingredients):
+    #print(ingredients)
+    index = 0
+    output = []
+    while True:
+        singleQuote = ingredients.find("'", index, len(ingredients))
+        doubleQuote = ingredients.find('"', index, len(ingredients))
+        #print("single = " + str(singleQuote))
+        #print("double = " + str(doubleQuote))
+        if singleQuote == -1 and doubleQuote == -1:
+            return output
+        if singleQuote == -1:
+            singleQuote = len(ingredients) + 1
+        if doubleQuote == -1:
+            doubleQuote = len(ingredients) + 1
+        if(singleQuote < doubleQuote):
+            end = ingredients.find("'", singleQuote+1, len(ingredients))
+            output.append(ingredients[singleQuote+1:end])
+        if(doubleQuote < singleQuote):
+            end = ingredients.find('"', doubleQuote+1, len(ingredients))
+            output.append(ingredients[doubleQuote+1:end])
+        index = end + 1
+        #print(index)
+        
+
+
 @app.route('/', methods=['GET'])
 def home():
     query = request.args.get('search')
@@ -77,7 +103,8 @@ def recipe_page():
     
     if request.args.get('id') != None:
         recipe = rws.lookup(request.args.get('id'))[0]
-        ingredients = recipe['ingredients'].strip('[').strip(']').split("'")
+        ingredients = recipe['ingredients'].strip('[').strip(']')
+        ingredients = toList(ingredients)
 
         temp = []
         for i in ingredients:
