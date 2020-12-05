@@ -49,50 +49,73 @@ class RecipeWhooshSearch(object):
 			# result will be returned
 			parser = QueryParser('url', schema = index.schema)
 			q = parser.parse('http OR https')
-			all_docs = searcher.search(q)
+			all_docs = searcher.search(q, limit=None)
 			# Creates an empty result for a filter and mask
 			p = QueryParser('id', schema=index.schema)
 			q = p.parse('')
-			myMask = searcher.search(q)
-			myFilter = searcher.search(q)
+			myMask = searcher.search(q, limit=None)
+			myFilter = searcher.search(q, limit=None)
 			
 			# include query parsing
 			if in_query != []:	
 				in_parser = QueryParser('ingredients', schema=index.schema)
+				inFilter = searcher.search(q, limit=None)
+				in_q = in_parser.parse(in_query[0])
+				in_r = searcher.search(in_q, limit=None)
+				inFilter.extend(in_r)
 				for q in in_query:
 					in_q = in_parser.parse(q)
-					in_r = searcher.search(in_q)
-					myFilter.extend(in_r)
+					in_r = searcher.search(in_q, limit=None)
+					inFilter.filter(in_r)
+				myFilter.extend(inFilter)
+
 			# exclude query parsing
 			if ex_query != []:
 				ex_parser = QueryParser('ingredients', schema=index.schema)
 				for q in ex_query:
 					ex_q = ex_parser.parse(q)
-					ex_r = searcher.search(ex_q)
+					ex_r = searcher.search(ex_q, limit=None)
 					myMask.extend(ex_r)
-			else:
-				ex_r = all_docs
+
 			# allergies query parsing
 			if allergies != []:
 				allergy_parser = QueryParser('cautions', schema=index.schema)
 				allergies = list_to_keywords(allergies)
 				allergy_q = allergy_parser.parse(allergies)
-				allergy_r = searcher.search(allergy_q)
+				allergy_r = searcher.search(allergy_q, limit=None)
 				myMask.extend(allergy_r)
+
 			# diets query parsing
 			if diets != []:
+				p = QueryParser('id', schema=index.schema)
+				q = p.parse('')
+				dietFilter = searcher.search(q, limit=None)
 				diet_parser = QueryParser('dietInfo', schema=index.schema)
-				diets = list_to_keywords(diets)
-				diet_q = diet_parser.parse(diets)
-				diet_r = searcher.search(diet_q)
-				myFilter.extend(diet_r)
+				diet_q = diet_parser.parse(diets[0])
+				diet_r = searcher.search(diet_q, limit=None)
+				dietFilter.extend(diet_r)
+				for d in diets:
+					diet_q = diet_parser.parse(d)
+					diet_r = searcher.search(diet_q, limit=None)
+					dietFilter.filter(diet_r)
+
+				if(in_query == []):
+					myFilter.extend(dietFilter)
+				else:
+					myFilter.filter(dietFilter)
 			# filtering results to get intersection
 			# print(type(results))
 
 			# Check if the filter is empty so we don't intersect nothing
-			if(len(myFilter) == 0):
+			if(diets == [] and in_query == []):
 				myFilter = all_docs
-
+			elif myFilter.scored_length() == 0:	#if we filtered and got nothing, we should return nothing
+				payload = {}
+				payload_entries = list()
+				payload['entries']  = payload_entries
+				payload['total'] = 0
+				return payload
+			
 			if given_query != '' and given_query != None:
 				if given_query[0] == '"' and given_query[-1] == '"':
 					given_query = given_query[1:-1]
@@ -104,9 +127,8 @@ class RecipeWhooshSearch(object):
 			else:
 				parser = QueryParser('url', schema = index.schema)
 				q = parser.parse('http OR https')
-				all_docs = searcher.search_page(q, page, filter=myFilter, mask=myMask)
-				print(len(all_docs))
-				results = all_docs
+				results = searcher.search_page(q, page, filter=myFilter, mask=myMask)
+				
 
 			# Format results for returning
 			payload = {}
