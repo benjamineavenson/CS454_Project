@@ -49,9 +49,6 @@ class RecipeWhooshSearch(object):
 			q = p.parse('')
 			myMask = searcher.search(q)
 			myFilter = searcher.search(q)
-			# Check if the filter is empty so we don't intersect nothing
-			if(len(myFilter) == 0):
-				myFilter = all_docs
 			
 			# include query parsing
 			if in_query != '':	
@@ -83,7 +80,10 @@ class RecipeWhooshSearch(object):
 				myFilter.extend(diet_r)
 			# filtering results to get intersection
 			# print(type(results))
-			
+
+			# Check if the filter is empty so we don't intersect nothing
+			if(len(myFilter) == 0):
+				myFilter = all_docs
 
 			if given_query != '' and given_query != None:
 				if given_query[0] == '"' and given_query[-1] == '"':
@@ -124,7 +124,6 @@ class RecipeWhooshSearch(object):
 			
 			result = list(searcher.documents(id=id))
 		
-		print(result[0]['cautions'])
 		return result
 			
 
@@ -134,8 +133,8 @@ class RecipeWhooshSearch(object):
 						url=TEXT(stored=True),
 						name=TEXT(stored=True), 
 						ingredients=TEXT(stored=True),
-						cautions=KEYWORD(stored=True),
-						dietInfo=KEYWORD(stored=True),
+						cautions=TEXT(stored=True),
+						dietInfo=TEXT(stored=True),
 						nutrition=TEXT(stored=True),
 						image=TEXT(stored=True))
 		indexer = create_in('WhooshIndex', schema)
