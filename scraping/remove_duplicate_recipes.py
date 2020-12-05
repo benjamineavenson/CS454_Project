@@ -7,10 +7,10 @@ with open('recipes/recipe_master_list.json', 'r') as db:
     entries = 0
     out = list()
     for entry in db_json:
-        if entry['data']['recipe']['label'] in names:
+        if entry['data']['recipe']['label'].casefold().replace('recipes', '').replace('recipe', '') in names:
             dups = dups + 1
         else:
-            names.append(entry['data']['recipe']['label'])
+            names.append(entry['data']['recipe']['label'].casefold().replace('recipes', '').replace('recipe', ''))
             out.append(entry)
             entries = entries + 1
 
