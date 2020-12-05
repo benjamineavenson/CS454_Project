@@ -26,7 +26,7 @@ class RecipeWhooshSearch(object):
 
 
 	def search(self, given_query='', 
-				in_query='', ex_query='', 
+				in_query=[], ex_query=[], 
 				diets=[], allergies=[], page=1):
 		# These are only for parsing not for filling the results
 		keys = ['name', 'ingredients', 'cautions', 'dietLabels', 'healthLabels']
@@ -51,17 +51,19 @@ class RecipeWhooshSearch(object):
 			myFilter = searcher.search(q)
 			
 			# include query parsing
-			if in_query != '':	
+			if in_query != []:	
 				in_parser = QueryParser('ingredients', schema=index.schema)
-				in_q = in_parser.parse(in_query)
-				in_r = searcher.search(in_q)
-				myFilter.extend(in_r)
+				for q in in_query:
+					in_q = in_parser.parse(q)
+					in_r = searcher.search(in_q)
+					myFilter.extend(in_r)
 			# exclude query parsing
-			if ex_query != '':
+			if ex_query != []:
 				ex_parser = QueryParser('ingredients', schema=index.schema)
-				ex_q = ex_parser.parse(ex_query)
-				ex_r = searcher.search(ex_q)
-				myMask.extend(ex_r)
+				for q in ex_query:
+					ex_q = ex_parser.parse(q)
+					ex_r = searcher.search(ex_q)
+					myMask.extend(ex_r)
 			else:
 				ex_r = all_docs
 			# allergies query parsing

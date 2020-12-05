@@ -79,6 +79,9 @@ def advanced():
         (cautions == [])):
         return render_template('advanced.html')
     
+    include = include.split(',')
+    exclude = exclude.split(',')
+
     results = rws.search(given_query=query, 
                         in_query=include, 
                         ex_query=exclude, 
