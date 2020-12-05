@@ -1,4 +1,5 @@
 import whoosh
+from whoosh import scoring
 from whoosh.index import create_in
 from whoosh.index import open_dir
 from whoosh.fields import *
@@ -27,7 +28,7 @@ class RecipeWhooshSearch(object):
 
 	def search(self, given_query='', 
 				in_query=[], ex_query=[], 
-				diets=[], allergies=[], page=1):
+				diets=[], allergies=[], page=1, ranking="BM25"):
 		# These are only for parsing not for filling the results
 		keys = ['name', 'ingredients', 'cautions', 'dietLabels', 'healthLabels']
 
@@ -37,7 +38,12 @@ class RecipeWhooshSearch(object):
 			self.index()
 			index = open_dir('WhooshIndex')
 
-		with index.searcher() as searcher:
+		if ranking == "TF-IDF":
+			ranking = scoring.TF_IDF()
+		else:
+			ranking = scoring.BM25F()
+
+		with index.searcher(weighting=ranking) as searcher:
 			# Universal all docs in case of None
 			# because in the intersection the smaller 
 			# result will be returned

@@ -69,6 +69,7 @@ def advanced():
     exclude = request.args.get('excluded_ingredients')
     diets   = request.args.getlist('diets')
     cautions= request.args.getlist('cautions')
+    ranking = request.args.get('ranking_method')
     page = request.args.get('page')
     page = int(page) if(page != None) else 1
     # test allergens
@@ -79,15 +80,16 @@ def advanced():
         (cautions == [])):
         return render_template('advanced.html')
     
-    include = include.split(',')
-    exclude = exclude.split(',')
+    include_list = include.split(',')
+    exclude_list = exclude.split(',')
 
     results = rws.search(given_query=query, 
-                        in_query=include, 
-                        ex_query=exclude, 
+                        in_query=include_list, 
+                        ex_query=exclude_list, 
                         diets=diets, 
                         allergies=cautions, 
-                        page=page)
+                        page=page,
+                        ranking=ranking)
     total_pages = math.ceil(results['total']/10)
     return render_template('results.html', 
                             query=query,
@@ -98,6 +100,7 @@ def advanced():
                             results=results['entries'], 
                             total_pages=total_pages, 
                             curr_page=page,
+                            ranking=ranking,
                             advanced=True)
 
 @app.route('/recipe_page', methods=['GET'])
