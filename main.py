@@ -25,7 +25,8 @@ def home():
                                 query=query, 
                                 results=results['entries'], 
                                 total_pages=total_pages, 
-                                curr_page=page)
+                                curr_page=page,
+                                advanced=False)
     return render_template('landing_page.html')
 
 @app.route('/test')
@@ -37,7 +38,7 @@ def advanced():
     #print(request.args)
     rws = RecipeWhooshSearch()
     # Get all the input from the user
-    query = request.args.get('keywords')
+    query = request.args.get('search')
     include = request.args.get('included_ingredients')
     exclude = request.args.get('excluded_ingredients')
     diets   = request.args.getlist('diets')
@@ -60,10 +61,15 @@ def advanced():
                         page=page)
     total_pages = math.ceil(results['total']/10)
     return render_template('results.html', 
-                            query=query, 
+                            query=query,
+                            in_query=include,
+                            ex_query=exclude,
+                            diets=diets,
+                            cautions=cautions, 
                             results=results['entries'], 
                             total_pages=total_pages, 
-                            curr_page=page)
+                            curr_page=page,
+                            advanced=True)
 
 @app.route('/recipe_page', methods=['GET'])
 def recipe_page():
