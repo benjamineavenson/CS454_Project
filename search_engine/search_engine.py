@@ -149,7 +149,7 @@ class RecipeWhooshSearch(object):
 			
 
 	def index(self):	#create the index
-		# (Id, Name, ingredients, cautions, dietLabel, healthLabel, image, url)
+		# (id, url, name, ingredients, cautions, dietInfo="healthLabel"+"dietLabel", nutrition, image)
 		schema = Schema(id=ID(stored=True),
 						url=TEXT(stored=True),
 						name=TEXT(stored=True), 
