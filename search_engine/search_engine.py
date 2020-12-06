@@ -8,15 +8,6 @@ from whoosh.qparser import MultifieldParser, OrGroup
 from whoosh import qparser
 import json
 
-
-def list_to_keywords(ls):
-	keywords = ""
-	for k in ls:
-		keywords += k+','
-	return keywords[:-1]
-
-
-
 class RecipeWhooshSearch(object):
 	"""RecipeWhooshSearch creates an object that can 
 	take in a given json data set and create a schema, 
@@ -26,19 +17,19 @@ class RecipeWhooshSearch(object):
 		super(RecipeWhooshSearch, self).__init__()
 
 
-	def search(self, given_query='', 
+	def search(self, given_query='', 	#search function
 				in_query=[''], ex_query=[''], 
 				diets=[], allergies=[], page=1, ranking="BM25"):
 		# These are only for parsing not for filling the results
 		keys = ['name', 'ingredients', 'cautions', 'dietLabels', 'healthLabels']
 
-		try:
+		try:	#open the index
 			index = open_dir('WhooshIndex')
 		except Exception:
-			self.index()
+			self.index()	#make the index if it doesnt exist
 			index = open_dir('WhooshIndex')
 
-		if ranking == "TF-IDF":
+		if ranking == "TF-IDF":	#set the ranking algorithm
 			ranking = scoring.TF_IDF()
 		else:
 			ranking = scoring.BM25F()
@@ -49,7 +40,7 @@ class RecipeWhooshSearch(object):
 			# result will be returned
 			parser = QueryParser('url', schema = index.schema)
 			q = parser.parse('http OR https')
-			all_docs = searcher.search(q, limit=None)
+			all_docs = searcher.search(q, limit=None)	
 			# Creates an empty result for a filter and mask
 			p = QueryParser('id', schema=index.schema)
 			q = p.parse('')
@@ -60,11 +51,11 @@ class RecipeWhooshSearch(object):
 			if in_query != ['']:	
 				in_parser = QueryParser('ingredients', schema=index.schema)
 				inFilter = searcher.search(q, limit=None)
-				in_q = in_parser.parse(in_query[0])
+				in_q = in_parser.parse(in_query[0])	#get the first ingredient...
 				in_r = searcher.search(in_q, limit=None)
 				inFilter.extend(in_r)
 				for q in in_query:
-					in_q = in_parser.parse(q)
+					in_q = in_parser.parse(q)	#take the intersection of remaining docs with docs containing next ingredient
 					in_r = searcher.search(in_q, limit=None)
 					inFilter.filter(in_r)
 				myFilter.extend(inFilter)
@@ -75,7 +66,7 @@ class RecipeWhooshSearch(object):
 				for q in ex_query:
 					ex_q = ex_parser.parse(q)
 					ex_r = searcher.search(ex_q, limit=None)
-					myMask.extend(ex_r)
+					myMask.extend(ex_r)	#list of docs to mask
 
 			# allergies query parsing
 			if allergies != []:
@@ -83,7 +74,7 @@ class RecipeWhooshSearch(object):
 				for q in allergies:
 					allergy_q = allergy_parser.parse(q)
 					allergy_r = searcher.search(allergy_q, limit=None)
-					myMask.extend(allergy_r)
+					myMask.extend(allergy_r)	#list of docs to mask
 
 			# diets query parsing
 			if diets != []:
@@ -92,17 +83,17 @@ class RecipeWhooshSearch(object):
 				dietFilter = searcher.search(q, limit=None)
 				diet_parser = QueryParser('dietInfo', schema=index.schema)
 				diet_q = diet_parser.parse(diets[0])
-				diet_r = searcher.search(diet_q, limit=None)
+				diet_r = searcher.search(diet_q, limit=None)	#get the first diet
 				dietFilter.extend(diet_r)
 				for d in diets:
 					diet_q = diet_parser.parse(d)
 					diet_r = searcher.search(diet_q, limit=None)
-					dietFilter.filter(diet_r)
+					dietFilter.filter(diet_r)	#take the intersection of whats already in the filter and the new docs to filter by
 
-				if(in_query == ['']):
+				if(in_query == ['']):	#if we had no ingredients filter, let the filter be the diet filter
 					myFilter.extend(dietFilter)
 				else:
-					myFilter.filter(dietFilter)
+					myFilter.filter(dietFilter)	#otherwise the filter is the intersection of our two filters
 			# filtering results to get intersection
 			# print(type(results))
 
@@ -116,7 +107,7 @@ class RecipeWhooshSearch(object):
 				payload['total'] = 0
 				return payload
 			
-			if given_query != '' and given_query != None:
+			if given_query != '' and given_query != None:	#the actual search
 				if given_query[0] == '"' and given_query[-1] == '"':
 					given_query = given_query[1:-1]
 					parser = MultifieldParser(keys, schema=index.schema)
@@ -125,7 +116,7 @@ class RecipeWhooshSearch(object):
 				query = parser.parse(given_query)
 				results = searcher.search_page(query, page, filter=myFilter, mask=myMask)
 			else:
-				parser = QueryParser('url', schema = index.schema)
+				parser = QueryParser('url', schema = index.schema)	#if we arent given a query for the search, filter and mask all docs
 				q = parser.parse('http OR https')
 				results = searcher.search_page(q, page, filter=myFilter, mask=myMask)
 				
@@ -143,7 +134,7 @@ class RecipeWhooshSearch(object):
 		return payload
 
 
-	def lookup(self, id):
+	def lookup(self, id):	#get a document by its id
 		try:
 			index = open_dir('WhooshIndex')
 		except Exception:
@@ -157,7 +148,7 @@ class RecipeWhooshSearch(object):
 		return result
 			
 
-	def index(self):
+	def index(self):	#create the index
 		# (Id, Name, ingredients, cautions, dietLabel, healthLabel, image, url)
 		schema = Schema(id=ID(stored=True),
 						url=TEXT(stored=True),
@@ -177,14 +168,14 @@ class RecipeWhooshSearch(object):
 
 				dietLabels = recipe['dietLabels'] if 'dietLabels' in recipe else []
 				healthLabels = recipe['healthLabels'] if 'healthLabels' in recipe else []
-				dietInfo = dietLabels + healthLabels
+				dietInfo = dietLabels + healthLabels	#combine these into a single field
 
 				nutrients = []
 				for nutrient in recipe['totalNutrients']:
 					quantity = str(recipe['totalNutrients'][nutrient]['quantity'])
 					quantity = quantity.partition('.')[0] + quantity.partition('.')[1] + quantity.partition('.')[2][:2]
 					n = recipe['totalNutrients'][nutrient]['label'] + ": " + quantity + recipe['totalNutrients'][nutrient]['unit']
-					nutrients.append(n)
+					nutrients.append(n)	#store the nutrients in such a way that they will be easy to display later, since we arent searching over them
 
 				writer.add_document(id=str(entry['id']),
 									url=str(recipe['url'] if 'url' in recipe else '0'),
