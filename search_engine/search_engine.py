@@ -27,7 +27,7 @@ class RecipeWhooshSearch(object):
 
 
 	def search(self, given_query='', 
-				in_query=[], ex_query=[], 
+				in_query=[''], ex_query=[''], 
 				diets=[], allergies=[], page=1, ranking="BM25"):
 		# These are only for parsing not for filling the results
 		keys = ['name', 'ingredients', 'cautions', 'dietLabels', 'healthLabels']
@@ -57,7 +57,7 @@ class RecipeWhooshSearch(object):
 			myFilter = searcher.search(q, limit=None)
 			
 			# include query parsing
-			if in_query != []:	
+			if in_query != ['']:	
 				in_parser = QueryParser('ingredients', schema=index.schema)
 				inFilter = searcher.search(q, limit=None)
 				in_q = in_parser.parse(in_query[0])
@@ -70,7 +70,7 @@ class RecipeWhooshSearch(object):
 				myFilter.extend(inFilter)
 
 			# exclude query parsing
-			if ex_query != []:
+			if ex_query != ['']:
 				ex_parser = QueryParser('ingredients', schema=index.schema)
 				for q in ex_query:
 					ex_q = ex_parser.parse(q)
@@ -80,13 +80,11 @@ class RecipeWhooshSearch(object):
 			# allergies query parsing
 			if allergies != []:
 				allergy_parser = QueryParser('cautions', schema=index.schema)
-				allergies = list_to_keywords(allergies)
-				allergy_q = allergy_parser.parse(allergies)
-				allergy_r = searcher.search(allergy_q, limit=None)
-				print(allergy_r)
-				myMask.extend(allergy_r)
+				for q in allergies:
+					allergy_q = allergy_parser.parse(q)
+					allergy_r = searcher.search(allergy_q, limit=None)
+					myMask.extend(allergy_r)
 
-			print(myMask)
 			# diets query parsing
 			if diets != []:
 				p = QueryParser('id', schema=index.schema)
@@ -101,7 +99,7 @@ class RecipeWhooshSearch(object):
 					diet_r = searcher.search(diet_q, limit=None)
 					dietFilter.filter(diet_r)
 
-				if(in_query == []):
+				if(in_query == ['']):
 					myFilter.extend(dietFilter)
 				else:
 					myFilter.filter(dietFilter)
@@ -109,7 +107,7 @@ class RecipeWhooshSearch(object):
 			# print(type(results))
 
 			# Check if the filter is empty so we don't intersect nothing
-			if(diets == [] and (in_query == [''] or in_query == [])):
+			if(diets == [] and in_query == ['']):
 				myFilter = all_docs
 			elif myFilter.scored_length() == 0:	#if we filtered and got nothing, we should return nothing
 				payload = {}
